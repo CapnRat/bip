@@ -30,6 +30,7 @@
 #include "bip.h"
 #include "line.h"
 #include "defaults.h"
+#include "crypt.h"
 
 int sighup = 0;
 
@@ -584,6 +585,19 @@ static int add_connection(bip_t *bip, struct bipuser *user, list_t *data)
 					"not built with SSL support.");
 			break;
 #endif
+		case LEX_NICKSERV_PASSWORD: {
+			int i, j;
+			char str[256];
+			for (i = 0, j = 0; i < strlen(t->pdata); i+=2, j++)
+				str[j] = htoi(&t->pdata[i], 2);
+			str[255] = 0;
+			int len = strlen(str);
+			l->nickserv_password = aes_decrypt(str, &len);
+			l->nickserv_password[len] = 0;
+			free(t->pdata);
+			t->pdata = NULL;
+		}
+		break;
 		default:
 			conf_die(bip, "Unknown keyword in connection "
 					"statement");
@@ -717,6 +731,8 @@ static int add_user(bip_t *bip, list_t *data, struct historical_directives *hds)
 			u->admin = t->ndata;
 			break;
 		case LEX_PASSWORD:
+			aes_init (t->pdata, NULL);
+
 			hash_binary(t->pdata, &u->password, &u->seed);
 			free(t->pdata);
 			t->pdata = NULL;

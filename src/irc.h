@@ -160,6 +160,9 @@ struct link {
 	STACK_OF(X509) *untrusted_certs;
 #endif
 	int in_use; /* for mark and sweep on reload */
+
+	char *nickserv_password;
+	unsigned int seed;
 };
 
 struct link_connection {

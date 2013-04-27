@@ -248,7 +248,12 @@ static void irc_server_connected(struct link_server *server)
 		sprintf(str, "%s\r\n", (char *)list_it_item(&itocs));
 		write_line(CONN(server), str);
 		free(str);
-        }
+	}
+
+	if (LINK(server)->nickserv_password) {
+		WRITE_LINE3(CONN(server), NULL, "PRIVMSG", "Nickserv", ":IDENTIFY", LINK(server)->nickserv_password);
+	}
+
 
 	if (LINK(server)->l_clientc == 0) {
 		if (LINK(server)->away_nick)
@@ -2628,6 +2633,7 @@ void link_kill(bip_t *bip, struct link *link)
 	MAYFREE(link->s_password);
 	MAYFREE(link->connect_nick);
 	MAYFREE(link->vhost);
+	MAYFREE(link->nickserv_password);
 #ifdef HAVE_LIBSSL
 	sk_X509_free(link->untrusted_certs);
 #endif

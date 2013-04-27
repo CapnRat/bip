@@ -30,6 +30,8 @@
 #define HASH_NOCASE 1
 #define HASH_DEFAULT 0
 
+unsigned int htoi (const char *ptr, int len);
+
 void mylog(int level, char *fmt, ...);
 void _mylog(int level, char *fmt, va_list ap);
 void fatal(char *fmt, ...);

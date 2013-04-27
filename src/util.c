@@ -824,3 +824,30 @@ void array_free(array_t *a)
 		free(a->elemv);
 	free(a);
 }
+
+unsigned int htoi (const char *ptr, int len)
+{
+	unsigned int value = 0;
+	char ch = *ptr;
+	int count = 0;
+
+	/*--------------------------------------------------------------------------*/
+
+	while (ch == ' ' || ch == '\t')
+		ch = *(++ptr);
+
+	for (;;) {
+		count++;
+		if (ch >= '0' && ch <= '9')
+			value = (value << 4) + (ch - '0');
+		else if (ch >= 'A' && ch <= 'F')
+			value = (value << 4) + (ch - 'A' + 10);
+		else if (ch >= 'a' && ch <= 'f')
+			value = (value << 4) + (ch - 'a' + 10);
+		else
+			return value;
+		if (count == len)
+			return value;
+		ch = *(++ptr);
+	}
+}
